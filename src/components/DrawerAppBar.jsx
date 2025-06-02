@@ -8,12 +8,16 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import AddUserModal from './AddUserModal';
-import AddIcon from '@mui/icons-material/Add';
-
-const navItems = ['Home', 'Log out'];
-
+import { useNavigate } from 'react-router-dom';
 function DrawerAppBar() {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+
+        // Redirect to login page
+        navigate('/login');
+    };
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -36,11 +40,12 @@ function DrawerAppBar() {
                         Student Management System
                     </Typography>
                     <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                        {navItems.map((item) => (
-                            <Button key={item} sx={{ color: '#fff' }}>
-                                {item}
-                            </Button>
-                        ))}
+                        <Button sx={{ color: '#fff' }} onClick={() => navigate('/')}>
+                            Home
+                        </Button>
+                        <Button sx={{ color: '#fff' }} onClick={handleLogout}>
+                            Log out
+                        </Button>
                     </Box>
                 </Toolbar>
             </AppBar>
