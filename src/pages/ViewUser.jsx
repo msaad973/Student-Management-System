@@ -35,7 +35,7 @@ function ViewUser() {
         gender: ''
     });
 
-    
+
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedUserIndex, setSelectedUserIndex] = useState(null);
     const openMenu = Boolean(anchorEl);
@@ -98,8 +98,9 @@ function ViewUser() {
                     setNewUser={setNewUser}
                 />
 
-                <Box backgroundColor="#555">
-                    <h3 style={{ fontSize: '24px', fontWeight: 'bold' , marginLeft: '10px'}}> Students:</h3>
+                <Box backgroundColor="#555" position="relative" borderRadius="15px" p={2}>
+                    <div className="cornerDecoration"></div>
+                    <h3 style={{ fontSize: '24px', fontWeight: 'bold', marginLeft: '10px',color: '#fff' }}>Students:</h3>
                     <TableContainer component={Paper}>
                         <Table>
                             <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
