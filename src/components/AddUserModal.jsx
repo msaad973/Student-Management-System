@@ -6,7 +6,7 @@ const AddUserModal = ({  open, onClose, onSave, newUser, setNewUser }) => {
         <Box component="main" sx={{ p: 3 }}>
             <Toolbar />
             <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-                <DialogTitle>Add New User</DialogTitle>
+                <DialogTitle>Add New Student</DialogTitle>
                 <DialogContent dividers>
                     {Object.keys(newUser).map((field) => (
                         <TextField
