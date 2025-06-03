@@ -107,6 +107,8 @@ function ViewUser() {
                                     <TableCell>Name</TableCell>
                                     <TableCell>Email</TableCell>
                                     <TableCell>Phone</TableCell>
+                                    <TableCell>CGPA</TableCell>
+                                    <TableCell>Attendance</TableCell>
                                     <TableCell>Action</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -116,6 +118,8 @@ function ViewUser() {
                                         <TableCell>{user.name}</TableCell>
                                         <TableCell>{user.email}</TableCell>
                                         <TableCell>{user.phone}</TableCell>
+                                        <TableCell>{user.cgpa}</TableCell>
+                                        <TableCell>{user.attendance}</TableCell>
                                         <TableCell>
                                             <IconButton onClick={(e) => handleMenuClick(e, index)}>
                                                 <MoreVertIcon />

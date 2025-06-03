@@ -9,13 +9,15 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth'
+import { auth } from '../firebase/config';
 function DrawerAppBar() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
+        signOut(auth);
         localStorage.removeItem('token');
 
-        // Redirect to login page
         navigate('/login');
     };
 

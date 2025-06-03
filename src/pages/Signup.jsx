@@ -9,7 +9,6 @@ export default function Signup() {
     const handleSignup = async (email, password) => {
         try {
             await createUserWithEmailAndPassword(auth, email, password);
-            alert("Account created successfully!");
             navigate("/login");
         } catch (error) {
             alert(error.message);

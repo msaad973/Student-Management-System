@@ -9,9 +9,10 @@ export default function Login() {
     const handleLogin = async (email, password) => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            alert("Logged in successfully!");
+            console.log("User Info:", auth.currentUser);
+            console.log("Token:", auth.currentUser.accessToken);
             navigate("/ViewUser");
-            // Optionally navigate to dashboard
+            
         } catch (error) {
             alert(error.message);
         }
