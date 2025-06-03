@@ -86,7 +86,7 @@ function ViewUser() {
                             '&:hover': { backgroundColor: '#555' }
                         }}
                     >
-                        Add User
+                        Add Students
                     </Button>
                 </Box>
 
@@ -99,7 +99,7 @@ function ViewUser() {
                 />
 
                 <Box>
-                    <h3 style={{ fontSize: '24px', fontWeight: 'bold' }}> Users:</h3>
+                    <h3 style={{ fontSize: '24px', fontWeight: 'bold' }}> Students:</h3>
                     <TableContainer component={Paper}>
                         <Table>
                             <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
