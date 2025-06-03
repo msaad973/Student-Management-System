@@ -45,7 +45,7 @@ function DrawerAppBar() {
                         {/* <Button sx={{ color: '#fff' }} onClick={() => navigate('/')}>
                             Home
                         </Button> */}
-                        <Button sx={{ color: '#fff' }} onClick={handleLogout}>
+                        <Button sx={{ color: '#fff',":hover":{color:"black"} }} onClick={handleLogout}>
                             Log out
                         </Button>
                     </Box>
