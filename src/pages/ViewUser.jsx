@@ -98,8 +98,8 @@ function ViewUser() {
                     setNewUser={setNewUser}
                 />
 
-                <Box>
-                    <h3 style={{ fontSize: '24px', fontWeight: 'bold' }}> Students:</h3>
+                <Box backgroundColor="#555">
+                    <h3 style={{ fontSize: '24px', fontWeight: 'bold' , marginLeft: '10px'}}> Students:</h3>
                     <TableContainer component={Paper}>
                         <Table>
                             <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
