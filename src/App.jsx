@@ -8,6 +8,7 @@ import Signup from './pages/Signup';
 import EditUser from './pages/EditUser';
 import ViewUser from './pages/ViewUser';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ViewDetails from './pages/ViewDetails';
 
 // import UserList from './components/UserList';
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/edituser" element={<EditUser />} />
           <Route path="/viewuser" element={<ViewUser />} />
+          <Route path="/view-details" element={<ViewDetails />} />
         </Routes>
       </BrowserRouter>
     </>
