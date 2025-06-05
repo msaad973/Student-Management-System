@@ -42,10 +42,8 @@ function DrawerAppBar() {
                         Student Management System
                     </Typography>
                     <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                        {/* <Button sx={{ color: '#fff' }} onClick={() => navigate('/')}>
-                            Home
-                        </Button> */}
-                        <Button sx={{ color: '#fff',":hover":{color:"black"} }} onClick={handleLogout}>
+
+                        <Button sx={{ color: '#fff', ":hover": { color: "black" } }} onClick={handleLogout}>
                             Log out
                         </Button>
                     </Box>
