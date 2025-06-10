@@ -1,40 +1,26 @@
 import React, { useState } from 'react';
 import {
-    Container,
-    Button,
-    Box,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    IconButton,
-    Menu,
-    MenuItem,
+    Container, Button, Box, Table, TableBody, TableCell,
+    TableContainer, TableHead, TableRow, Paper, IconButton,
+    Menu, MenuItem
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddUserModal from '../components/AddUserModal';
 import DrawerAppBar from '../components/DrawerAppBar';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { adduser, deleteuser } from '../redux/slices/userSlice';
 
 function ViewUser() {
     const [openDialog, setOpenDialog] = useState(false);
-    const [users, setUsers] = useState([]);
     const [newUser, setNewUser] = useState({
-        name: '',
-        email: '',
-        attendance: '',
-        dues: '',
-        cgpa: '',
-        dob: '',
-        department: '',
-        phone: '',
-        batch: '',
-        year: '',
-        gender: ''
+        name: '', email: '', attendance: '', dues: '',
+        cgpa: '', dob: '', department: '', phone: '',
+        batch: '', year: '', gender: ''
     });
+
+    const dispatch = useDispatch();
+    const users = useSelector((state) => state.user);
 
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
@@ -52,24 +38,21 @@ function ViewUser() {
     };
 
     const handleSaveUser = () => {
-        setUsers([...users, newUser]);
+        dispatch(adduser(newUser));
         closeModal();
+    };
+
+    const handleDeleteUser = (index) => {
+        dispatch(deleteuser(index));
+        handleMenuClose();
     };
 
     const closeModal = () => {
         setOpenDialog(false);
         setNewUser({
-            name: '',
-            email: '',
-            attendance: '',
-            dues: '',
-            cgpa: '',
-            dob: '',
-            department: '',
-            phone: '',
-            batch: '',
-            year: '',
-            gender: ''
+            name: '', email: '', attendance: '', dues: '',
+            cgpa: '', dob: '', department: '', phone: '',
+            batch: '', year: '', gender: ''
         });
     };
 
@@ -100,7 +83,6 @@ function ViewUser() {
                 />
 
                 <Box backgroundColor="#555" position="relative" borderRadius="15px" p={2}>
-                    <div className="cornerDecoration"></div>
                     <h3 style={{ fontSize: '24px', fontWeight: 'bold', marginLeft: '10px', color: '#fff' }}>Students:</h3>
                     <TableContainer component={Paper}>
                         <Table>
@@ -137,13 +119,15 @@ function ViewUser() {
                                                 }}>
                                                     View
                                                 </MenuItem>
-                                                <MenuItem onClick={() => { alert(`Editing ${user.name}`); handleMenuClose(); }}>Edit</MenuItem>
                                                 <MenuItem onClick={() => {
-                                                    const updated = [...users];
-                                                    updated.splice(index, 1);
-                                                    setUsers(updated);
+                                                    alert(`Editing ${user.name}`);
                                                     handleMenuClose();
-                                                }}>Delete</MenuItem>
+                                                }}>
+                                                    Edit
+                                                </MenuItem>
+                                                <MenuItem onClick={() => handleDeleteUser(index)}>
+                                                    Delete
+                                                </MenuItem>
                                             </Menu>
                                         </TableCell>
                                     </TableRow>

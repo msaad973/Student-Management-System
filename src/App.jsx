@@ -9,11 +9,12 @@ import EditUser from './pages/EditUser';
 import ViewUser from './pages/ViewUser';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ViewDetails from './pages/ViewDetails';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
-// import UserList from './components/UserList';
 export default function App() {
   return (
-    <>
+    <Provider store={store}>
       <BrowserRouter>
         <Routes>
           <Route path="/signup" element={<Signup />} />
@@ -23,6 +24,6 @@ export default function App() {
           <Route path="/view-details" element={<ViewDetails />} />
         </Routes>
       </BrowserRouter>
-    </>
+    </Provider>
   );
 }

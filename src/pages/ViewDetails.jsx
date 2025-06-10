@@ -28,11 +28,10 @@ const ViewDetails = () => {
                         <ArrowBack />
                     </IconButton>
                     <Typography variant="h6" sx={{ ml: 2 }} >
-                        View Student Details
+                        View Student Details...
                     </Typography>
                 </Toolbar>
             </AppBar>
-
             <Container maxWidth="sm">
                 <Card sx={{ p: 3, borderRadius: 3, boxShadow: 4, mb: 9, border: '2px solid #555' }}>
                     <CardContent>
@@ -46,19 +45,27 @@ const ViewDetails = () => {
                             height={50}
                             padding={1}
                             borderRadius={1}
-                            
+
 
                         >
                             Student Information
                         </Typography>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 2fr)', gap: '28px',position:'relative' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 2fr)', gap: '28px', position: 'relative' }}>
                             {Object.entries(user).map(([key, value]) => (
-                                <div className='flex ' key={key}>
+                                <div
+                                    key={key}
+                                    style={{
+                                        display: 'block',
+                                        alignItems: 'center',
+                                    }}
+                                >
                                     <p style={{ fontWeight: 'bold', color: '#666' }}>
                                         {key.charAt(0).toUpperCase() + key.slice(1)}:
                                     </p>
-                                    <p className='ml-2'>{value}</p>
+                                    <p>
+                                        {value}
+                                    </p>
                                 </div>
                             ))}
                         </div>
