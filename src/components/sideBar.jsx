@@ -33,8 +33,7 @@ function ResponsiveDrawer({ children }) {
     };
 
     const handleLogout = () => {
-        // Add your logout logic here (clear tokens, user data, etc.)
-        localStorage.removeItem('userToken'); // Example
+        localStorage.removeItem('userToken');
         navigate('/login');
     };
 
@@ -46,7 +45,7 @@ function ResponsiveDrawer({ children }) {
 
     const handleMenuItemClick = (path) => {
         navigate(path);
-        setMobileOpen(false); // Close mobile drawer after navigation
+        setMobileOpen(false);
     };
 
     const drawerContent = (
@@ -81,8 +80,7 @@ function ResponsiveDrawer({ children }) {
                     </ListItem>
                 ))}
             </List>
-            
-            {/* Fixed Logout Button at Bottom */}
+
             <Box sx={{ mt: 'auto', p: 2 }}>
                 <Divider sx={{ borderColor: '#374151', mb: 2 }} />
                 <Button
@@ -110,7 +108,6 @@ function ResponsiveDrawer({ children }) {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            {/* App Bar */}
             <AppBar
                 position="fixed"
                 sx={{
@@ -131,9 +128,7 @@ function ResponsiveDrawer({ children }) {
                 </Toolbar>
             </AppBar>
 
-            {/* Sidebar */}
             <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
-                {/* Mobile Drawer */}
                 <Drawer
                     variant="temporary"
                     open={mobileOpen}
@@ -152,7 +147,6 @@ function ResponsiveDrawer({ children }) {
                     {drawerContent}
                 </Drawer>
 
-                {/* Desktop Drawer */}
                 <Drawer
                     variant="permanent"
                     sx={{
@@ -170,7 +164,6 @@ function ResponsiveDrawer({ children }) {
                 </Drawer>
             </Box>
 
-            {/* Main Content */}
             <Box
                 component="main"
                 sx={{
