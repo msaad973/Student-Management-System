@@ -6,7 +6,6 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddUserModal from '../components/AddUserModal';
-import DrawerAppBar from '../components/DrawerAppBar';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { adduser, deleteuser } from '../redux/slices/userSlice';
@@ -21,8 +20,8 @@ function ViewUser() {
 
     const dispatch = useDispatch();
     const users = useSelector((state) => state.user);
-
     const navigate = useNavigate();
+    
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedUserIndex, setSelectedUserIndex] = useState(null);
     const openMenu = Boolean(anchorEl);
@@ -57,9 +56,8 @@ function ViewUser() {
     };
 
     return (
-        <Container>
-            <DrawerAppBar />
-            <Box sx={{ mt: 14 }}>
+        <Container maxWidth="lg">
+            <Box sx={{ mb: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
                     <Button
                         onClick={() => setOpenDialog(true)}
@@ -82,8 +80,23 @@ function ViewUser() {
                     setNewUser={setNewUser}
                 />
 
-                <Box backgroundColor="#555" position="relative" borderRadius="15px" p={2}>
-                    <h3 style={{ fontSize: '24px', fontWeight: 'bold', marginLeft: '10px', color: '#fff' }}>Students:</h3>
+                <Box 
+                    sx={{ 
+                        backgroundColor: "#555", 
+                        borderRadius: "15px", 
+                        p: 2 
+                    }}
+                >
+                    <h3 style={{ 
+                        fontSize: '24px', 
+                        fontWeight: 'bold', 
+                        marginLeft: '10px', 
+                        color: '#fff',
+                        marginTop: 0,
+                        marginBottom: '16px'
+                    }}>
+                        Students:
+                    </h3>
                     <TableContainer component={Paper}>
                         <Table>
                             <TableHead sx={{ backgroundColor: '#f5f5f5' }}>

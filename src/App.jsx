@@ -12,36 +12,33 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import ResponsiveDrawer from './components/sideBar';
-import { Box, Toolbar } from '@mui/material';
-
-const drawerWidth = 240;
 
 function AppContent() {
   const location = useLocation();
   const showSidebar = !['/signup', '/login'].includes(location.pathname);
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      {showSidebar && <ResponsiveDrawer />}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { xs: '100%', sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: showSidebar ? `${drawerWidth}px` : 0 },
-        }}
-      >
-        <Toolbar />
+    <>
+      {showSidebar ? (
+        <ResponsiveDrawer>
+          <Routes>
+            <Route path="/edituser" element={<EditUser />} />
+            <Route path="/overview" element={<ViewUser />} />
+            <Route path="/view-details" element={<ViewDetails />} />
+            <Route path="/assignment" element={<div>Assignment Page - Coming Soon</div>} />
+            <Route path="/quiz" element={<div>Quiz Page - Coming Soon</div>} />
+            <Route path="/" element={<ViewUser />} />
+            <Route path="*" element={<div style={{ textAlign: 'center', marginTop: '50px' }}>404 Page Not Found</div>} />
+          </Routes>
+        </ResponsiveDrawer>
+      ) : (
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/edituser" element={<EditUser />} />
-          <Route path="/viewuser" element={<ViewUser />} />
-          <Route path="/view-details" element={<ViewDetails />} />
+          <Route path="*" element={<div style={{ textAlign: 'center', marginTop: '50px' }}>404 Page Not Found</div>} />
         </Routes>
-      </Box>
-    </Box>
+      )}
+    </>
   );
 }
 

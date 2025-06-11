@@ -13,50 +13,67 @@ import {
     ListItemText,
     CssBaseline,
     Divider,
+    Button,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import QuizIcon from '@mui/icons-material/Quiz';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const drawerWidth = 240;
 
-function ResponsiveDrawer() {
+function ResponsiveDrawer({ children }) {
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const handleDrawerToggle = () => {
         setMobileOpen((prev) => !prev);
     };
 
+    const handleLogout = () => {
+        // Add your logout logic here (clear tokens, user data, etc.)
+        localStorage.removeItem('userToken'); // Example
+        navigate('/login');
+    };
+
     const menuItems = [
-        { text: 'Overview', icon: <DashboardIcon /> },
-        { text: 'Assignment', icon: <AssignmentIcon /> },
-        { text: 'Quiz', icon: <QuizIcon /> },
+        { text: 'Overview', icon: <DashboardIcon />, path: '/overview' },
+        { text: 'Assignment', icon: <AssignmentIcon />, path: '/assignment' },
+        { text: 'Quiz', icon: <QuizIcon />, path: '/quiz' },
     ];
 
+    const handleMenuItemClick = (path) => {
+        navigate(path);
+        setMobileOpen(false); // Close mobile drawer after navigation
+    };
+
     const drawerContent = (
-        <div style={{ height: '100%', backgroundColor: '#223037', color: 'white' }}>
-            <Toolbar>
+        <div style={{ height: '100%', backgroundColor: '#223037', color: 'white', display: 'flex', flexDirection: 'column' }}>
+            <Toolbar sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Typography
                     variant="h6"
                     noWrap
                     component="div"
-                    sx={{ fontWeight: 'bold', mx: 'auto' }}
+                    sx={{ fontWeight: 'bold' }}
                 >
                     Student Portal
                 </Typography>
             </Toolbar>
             <Divider sx={{ borderColor: '#374151' }} />
-            <List>
+            <List sx={{ flexGrow: 1 }}>
                 {menuItems.map((item) => (
                     <ListItem key={item.text} disablePadding>
                         <ListItemButton
                             sx={{
                                 color: 'white',
+                                backgroundColor: location.pathname === item.path ? '#344155' : 'transparent',
                                 '&:hover': {
                                     backgroundColor: '#334155',
                                 },
                             }}
+                            onClick={() => handleMenuItemClick(item.path)}
                         >
                             <ListItemIcon sx={{ color: 'white' }}>{item.icon}</ListItemIcon>
                             <ListItemText primary={<Typography>{item.text}</Typography>} />
@@ -64,6 +81,29 @@ function ResponsiveDrawer() {
                     </ListItem>
                 ))}
             </List>
+            
+            {/* Fixed Logout Button at Bottom */}
+            <Box sx={{ mt: 'auto', p: 2 }}>
+                <Divider sx={{ borderColor: '#374151', mb: 2 }} />
+                <Button
+                    fullWidth
+                    sx={{
+                        color: '#fff',
+                        backgroundColor: '#dc2626',
+                        ':hover': {
+                            backgroundColor: '#b91c1c',
+                            color: '#fff',
+                        },
+                        fontSize: '0.9rem',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        textTransform: 'none',
+                    }}
+                    onClick={handleLogout}
+                >
+                    Log out
+                </Button>
+            </Box>
         </div>
     );
 
@@ -88,9 +128,6 @@ function ResponsiveDrawer() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">
-                        Dashboard
-                    </Typography>
                 </Toolbar>
             </AppBar>
 
@@ -131,6 +168,19 @@ function ResponsiveDrawer() {
                 >
                     {drawerContent}
                 </Drawer>
+            </Box>
+
+            {/* Main Content */}
+            <Box
+                component="main"
+                sx={{
+                    flexGrow: 1,
+                    p: 3,
+                    width: { sm: `calc(100% - ${drawerWidth}px)` },
+                }}
+            >
+                <Toolbar />
+                {children}
             </Box>
         </Box>
     );
