@@ -25,7 +25,7 @@ function AppContent() {
             <Route path="/edituser" element={<EditUser />} />
             <Route path="/overview" element={<ViewUser />} />
             <Route path="/view-details" element={<ViewDetails />} />
-            <Route path="/assignment" element={<div>Assignment Page - Coming Soon</div>} />
+            <Route path="/assignment" element={<div> Assignment Page - Coming Soon</div>} />
             <Route path="/quiz" element={<div>Quiz Page - Coming Soon</div>} />
             <Route path="/" element={<ViewUser />} />
             <Route path="*" element={<div style={{ textAlign: 'center', marginTop: '50px' }}>404 Page Not Found</div>} />
