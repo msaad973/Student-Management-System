@@ -24,7 +24,7 @@ const AddUserModal = ({  open, onClose, onSave, newUser, setNewUser }) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button onClick={onSave} variant="contained">
+                    <Button onClick={onSave} disabled={!newUser.name || !newUser.email} variant="contained">
                         Save
                     </Button>
                 </DialogActions>

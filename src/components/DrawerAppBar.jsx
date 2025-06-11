@@ -6,18 +6,17 @@ import CssBaseline from '@mui/material/CssBaseline';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
-import { signOut } from 'firebase/auth'
+import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/config';
+
 function DrawerAppBar() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
         signOut(auth);
         localStorage.removeItem('token');
-
         navigate('/login');
     };
 
@@ -26,6 +25,7 @@ function DrawerAppBar() {
             <CssBaseline />
             <AppBar component="nav" sx={{ backgroundColor: '#223037' }}>
                 <Toolbar>
+                    {/* Menu icon for mobile */}
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -34,19 +34,23 @@ function DrawerAppBar() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-                    >
-                        Student Management System
-                    </Typography>
-                    <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
 
-                        <Button sx={{ color: '#fff', ":hover": { color: "black" } }} onClick={handleLogout}>
-                            Log out
-                        </Button>
-                    </Box>
+                    {/* Spacer to push logout button to the right */}
+                    <Box sx={{ flexGrow: 1 }} />
+
+                    {/* Logout button aligned right */}
+                    <Button
+                        sx={{
+                            color: '#fff',
+                            ':hover': {
+                                backgroundColor: '#334155',
+                                color: '#fff',
+                            },
+                        }}
+                        onClick={handleLogout}
+                    >
+                        Log out
+                    </Button>
                 </Toolbar>
             </AppBar>
         </Box>
