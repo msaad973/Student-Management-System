@@ -1,27 +1,29 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-    Box,
-    Container,
-    Typography,
-    Card,
-    CardContent,
-    Button,
-    IconButton,
-    Grid,
-    AppBar,
-    Toolbar,
+    Box, Container, Typography, Card, CardContent, Button, IconButton, AppBar, Toolbar
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteuser } from '../redux/slices/userSlice';
 const ViewDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const user = location.state?.user;
+    const users = useSelector((state) => state.user); 
+    const userIndex = users.findIndex((u) => u.email === user.email); 
+
+    const handleDelete = () => {
+        if (window.confirm('Are you sure you want to delete this record?')) {
+            dispatch(deleteuser(userIndex));
+            navigate('/overview');
+        }
+    };
 
     return (
         <>
-            {/* App Bar */}
             <AppBar position="static" sx={{ mb: 4, bgcolor: '#223037' }} >
                 <Toolbar>
                     <IconButton edge="start" color="inherit" onClick={() => navigate(-1)}>
@@ -32,6 +34,7 @@ const ViewDetails = () => {
                     </Typography>
                 </Toolbar>
             </AppBar>
+
             <Container maxWidth="sm">
                 <Card sx={{ p: 3, borderRadius: 3, boxShadow: 4, mb: 9, border: '2px solid #555' }}>
                     <CardContent>
@@ -45,32 +48,21 @@ const ViewDetails = () => {
                             height={50}
                             padding={1}
                             borderRadius={1}
-
-
                         >
                             Student Information
                         </Typography>
 
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 2fr)', gap: '28px', position: 'relative' }}>
                             {Object.entries(user).map(([key, value]) => (
-                                <div
-                                    key={key}
-                                    style={{
-                                        display: 'block',
-                                        alignItems: 'center',
-                                    }}
-                                >
+                                <div key={key}>
                                     <p style={{ fontWeight: 'bold', color: '#666' }}>
                                         {key.charAt(0).toUpperCase() + key.slice(1)}:
                                     </p>
-                                    <p>
-                                        {value}
-                                    </p>
+                                    <p>{value}</p>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Action Buttons */}
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
                             <Button
                                 variant="contained"
@@ -82,11 +74,7 @@ const ViewDetails = () => {
                             <Button
                                 variant="outlined"
                                 color="error"
-                                onClick={() => {
-                                    if (window.confirm('Are you sure you want to delete this record?')) {
-                                        navigate(-1);
-                                    }
-                                }}
+                                onClick={handleDelete}
                                 sx={{ textTransform: 'none' }}
                             >
                                 Delete
