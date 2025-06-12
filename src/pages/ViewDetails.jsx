@@ -79,6 +79,13 @@ const ViewDetails = () => {
                             >
                                 Delete
                             </Button>
+                            <Button
+                                variant="contained"
+                                onClick={() => navigate('/overview')}
+                                sx={{ textTransform: 'none' }}
+                            >
+                                Add Assignment
+                            </Button>
                         </Box>
                     </CardContent>
                 </Card>
