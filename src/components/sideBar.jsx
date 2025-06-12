@@ -19,7 +19,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import QuizIcon from '@mui/icons-material/Quiz';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const drawerWidth = 240;
 
@@ -27,6 +28,7 @@ function ResponsiveDrawer({ children }) {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+    const user = useSelector((state) => state.assignment);
 
     const handleDrawerToggle = () => {
         setMobileOpen((prev) => !prev);
