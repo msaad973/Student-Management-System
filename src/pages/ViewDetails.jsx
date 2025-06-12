@@ -6,20 +6,27 @@ import {
 import { ArrowBack } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteuser } from '../redux/slices/userSlice';
+import AssignmentModal from '../components/AssignmentModal';
+import { addAssignment } from '../redux/slices/assignmentSlice';
 const ViewDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [openModal, setOpenModal] = React.useState(false);
 
     const user = location.state?.user;
-    const users = useSelector((state) => state.user); 
-    const userIndex = users.findIndex((u) => u.email === user.email); 
+    const users = useSelector((state) => state.user);
+    const userIndex = users.findIndex((u) => u.email === user.email);
 
     const handleDelete = () => {
         if (window.confirm('Are you sure you want to delete this record?')) {
             dispatch(deleteuser(userIndex));
             navigate('/overview');
         }
+    };
+    const handleSaveAssignment = (assignmentData) => {
+        dispatch(addAssignment({ email: user.email, assignment: assignmentData }));
+        setOpenModal(false);
     };
 
     return (
@@ -79,13 +86,15 @@ const ViewDetails = () => {
                             >
                                 Delete
                             </Button>
-                            <Button
-                                variant="contained"
-                                onClick={() => navigate('/overview')}
-                                sx={{ textTransform: 'none' }}
-                            >
+                            <Button variant="contained" onClick={() => setOpenModal(true)} sx={{ textTransform: 'none' }}>
                                 Add Assignment
                             </Button>
+
+                            <AssignmentModal
+                                open={openModal}
+                                onClose={() => setOpenModal(false)}
+                                onSave={handleSaveAssignment}
+                            />
                         </Box>
                     </CardContent>
                 </Card>
