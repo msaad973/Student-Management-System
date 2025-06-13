@@ -8,7 +8,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddUserModal from '../components/AddUserModal';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { adduser, deleteuser } from '../redux/slices/userSlice';
+import { adduser, deleteuser, updateuser } from '../redux/slices/userSlice';
+import EditModal from '../components/EditModal';
 
 function ViewUser() {
     const [openDialog, setOpenDialog] = useState(false);
@@ -17,11 +18,12 @@ function ViewUser() {
         cgpa: '', dob: '', department: '', phone: '',
         batch: '', year: '', gender: ''
     });
+    const [openEditModal, setOpenEditModal] = useState(false);
 
     const dispatch = useDispatch();
     const users = useSelector((state) => state.user);
     const navigate = useNavigate();
-    
+
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedUserIndex, setSelectedUserIndex] = useState(null);
     const openMenu = Boolean(anchorEl);
@@ -55,6 +57,17 @@ function ViewUser() {
         });
     };
 
+    const handleEditSave = (updatedUser) => {
+        if (selectedUserIndex !== null) {
+            dispatch(updateuser({ index: selectedUserIndex, updatedUser }));
+        }
+        setOpenEditModal(false);
+        setSelectedUserIndex(null); // Reset selected user index
+    };
+
+    // Get the selected user safely
+    const selectedUser = selectedUserIndex !== null ? users[selectedUserIndex] : null;
+
     return (
         <Container maxWidth="lg">
             <Box sx={{ mb: 3 }}>
@@ -80,17 +93,17 @@ function ViewUser() {
                     setNewUser={setNewUser}
                 />
 
-                <Box 
-                    sx={{ 
-                        backgroundColor: "#555", 
-                        borderRadius: "15px", 
-                        p: 2 
+                <Box
+                    sx={{
+                        backgroundColor: "#555",
+                        borderRadius: "15px",
+                        p: 2
                     }}
                 >
-                    <h3 style={{ 
-                        fontSize: '24px', 
-                        fontWeight: 'bold', 
-                        marginLeft: '10px', 
+                    <h3 style={{
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        marginLeft: '10px',
                         color: '#fff',
                         marginTop: 0,
                         marginBottom: '16px'
@@ -103,9 +116,9 @@ function ViewUser() {
                                 <TableRow>
                                     <TableCell>Name</TableCell>
                                     <TableCell>Email</TableCell>
+                                    <TableCell>Attendance</TableCell>
                                     <TableCell>Phone</TableCell>
                                     <TableCell>CGPA</TableCell>
-                                    <TableCell>Attendance</TableCell>
                                     <TableCell>Action</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -127,14 +140,15 @@ function ViewUser() {
                                                 onClose={handleMenuClose}
                                             >
                                                 <MenuItem onClick={() => {
-                                                    navigate('/view-details', { state: { user: users[selectedUserIndex] } });
+                                                    navigate('/view-details', { state: { user: users[index] } });
                                                     handleMenuClose();
                                                 }}>
                                                     View
                                                 </MenuItem>
                                                 <MenuItem onClick={() => {
-                                                    alert(`Editing ${user.name}`);
+                                                    setSelectedUserIndex(index);
                                                     handleMenuClose();
+                                                    setOpenEditModal(true);
                                                 }}>
                                                     Edit
                                                 </MenuItem>
@@ -150,6 +164,19 @@ function ViewUser() {
                     </TableContainer>
                 </Box>
             </Box>
+
+            {/* Only render EditModal when we have a valid selected user */}
+            {selectedUser && (
+                <EditModal
+                    open={openEditModal}
+                    onClose={() => {
+                        setOpenEditModal(false);
+                        setSelectedUserIndex(null);
+                    }}
+                    user={selectedUser}
+                    onSave={handleEditSave}
+                />
+            )}
         </Container>
     );
 }

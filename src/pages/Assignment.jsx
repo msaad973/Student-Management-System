@@ -15,7 +15,7 @@ const AssignmentPage = () => {
     );
 
     return (
-        <Box p={3}>
+        <Box p={3}  >
             <Typography variant="h4" gutterBottom>
                 Assignments
             </Typography>

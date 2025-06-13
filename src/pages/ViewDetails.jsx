@@ -5,14 +5,17 @@ import {
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteuser } from '../redux/slices/userSlice';
+import { deleteuser, updateuser } from '../redux/slices/userSlice';
 import AssignmentModal from '../components/AssignmentModal';
 import { addAssignment } from '../redux/slices/assignmentSlice';
+import EditModal from '../components/EditModal';
+
 const ViewDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [openModal, setOpenModal] = React.useState(false);
+    const [openEditModal, setOpenEditModal] = React.useState(false);
 
     const user = location.state?.user;
     const users = useSelector((state) => state.user);
@@ -24,19 +27,25 @@ const ViewDetails = () => {
             navigate('/overview');
         }
     };
+
     const handleSaveAssignment = (assignmentData) => {
         dispatch(addAssignment({ email: user.email, assignment: assignmentData }));
         setOpenModal(false);
     };
 
+    const handleEditSave = (updatedUser) => {
+        dispatch(updateuser({ index: userIndex, updatedUser }));
+        setOpenEditModal(false);
+    };
+
     return (
         <>
-            <AppBar position="static" sx={{ mb: 4, bgcolor: '#223037' }} >
+            <AppBar position="static" sx={{ mb: 4, bgcolor: '#223037' }}>
                 <Toolbar>
                     <IconButton edge="start" color="inherit" onClick={() => navigate(-1)}>
                         <ArrowBack />
                     </IconButton>
-                    <Typography variant="h6" sx={{ ml: 2 }} >
+                    <Typography variant="h6" sx={{ ml: 2 }}>
                         View Student Details...
                     </Typography>
                 </Toolbar>
@@ -59,7 +68,7 @@ const ViewDetails = () => {
                             Student Information
                         </Typography>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 2fr)', gap: '28px', position: 'relative' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 2fr)', gap: '28px' }}>
                             {Object.entries(user).map(([key, value]) => (
                                 <div key={key}>
                                     <p style={{ fontWeight: 'bold', color: '#666' }}>
@@ -73,7 +82,7 @@ const ViewDetails = () => {
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
                             <Button
                                 variant="contained"
-                                onClick={() => navigate('/edit', { state: { user } })}
+                                onClick={() => setOpenEditModal(true)}
                                 sx={{ textTransform: 'none' }}
                             >
                                 Edit
@@ -86,7 +95,11 @@ const ViewDetails = () => {
                             >
                                 Delete
                             </Button>
-                            <Button variant="contained" onClick={() => setOpenModal(true)} sx={{ textTransform: 'none' }}>
+                            <Button
+                                variant="contained"
+                                onClick={() => setOpenModal(true)}
+                                sx={{ textTransform: 'none' }}
+                            >
                                 Add Assignment
                             </Button>
 
@@ -94,6 +107,14 @@ const ViewDetails = () => {
                                 open={openModal}
                                 onClose={() => setOpenModal(false)}
                                 onSave={handleSaveAssignment}
+                            />
+
+                            <EditModal
+                                open={openEditModal}
+                                onClose={() => setOpenEditModal(false)}
+                                user={user}
+                                userIndex={userIndex}
+                                onSave={handleEditSave}
                             />
                         </Box>
                     </CardContent>
