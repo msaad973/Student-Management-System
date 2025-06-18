@@ -33,6 +33,8 @@ const EditModal = ({ open, onClose, user,  onSave }) => {
         onSave(formData);
     };
 
+    console.log("Form data", formData);
+
     return (
         <Modal open={open} onClose={onClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
             <Box sx={style}>
@@ -50,7 +52,7 @@ const EditModal = ({ open, onClose, user,  onSave }) => {
                 ))}
                 <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button variant="contained" onClick={handleSubmit}>Save</Button>
+                    <Button variant="contained" onClick={handleSubmit}>Update</Button>
                 </Box>
             </Box>
         </Modal>

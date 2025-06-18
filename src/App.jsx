@@ -16,6 +16,7 @@ import store from './redux/store';
 import ResponsiveDrawer from './components/sideBar';
 import AssignmentPage from './pages/Assignment';
 import QuizPage from './pages/QuizPage';
+import StudentAssignments from './pages/StudentAssignment';
 
 function AppContent() {
   const location = useLocation();
@@ -32,6 +33,7 @@ function AppContent() {
             <Route path="/assignment" element={<AssignmentPage />} />
             <Route path="/quiz" element={<QuizPage />} />
             <Route path="/" element={<ViewUser />} />
+            <Route path="/student-assignments" element={<StudentAssignments />} />
             <Route path="*" element={<div style={{ textAlign: 'center', marginTop: '50px' }}>404 Page Not Found</div>} />
           </Routes>
         </ResponsiveDrawer>
