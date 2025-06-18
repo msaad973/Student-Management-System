@@ -24,7 +24,7 @@ export default function AuthForm({ onSubmit, buttonText, isLogin }) {
                 alignItems: "center",
                 minHeight: "100vh",
                 backgroundColor: "#223037",
-                 overflow: "hidden"
+                overflow: "hidden"
             }}
         >
             <Paper elevation={3} sx={{ p: 4, width: 350, borderRadius: 5, backgroundColor: "#fff" }}>
