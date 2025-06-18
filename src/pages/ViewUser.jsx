@@ -39,7 +39,11 @@ function ViewUser() {
     };
 
     const handleSaveUser = () => {
-        dispatch(adduser(newUser));
+        const userWithId = {
+            ...newUser,
+            id: Date.now() 
+        };
+        dispatch(adduser(userWithId));
         closeModal();
     };
 
@@ -62,10 +66,9 @@ function ViewUser() {
             dispatch(updateuser({ index: selectedUserIndex, updatedUser }));
         }
         setOpenEditModal(false);
-        setSelectedUserIndex(null); // Reset selected user index
+        setSelectedUserIndex(null); 
     };
 
-    // Get the selected user safely
     const selectedUser = selectedUserIndex !== null ? users[selectedUserIndex] : null;
 
     return (
@@ -124,7 +127,7 @@ function ViewUser() {
                             </TableHead>
                             <TableBody>
                                 {users.map((user, index) => (
-                                    <TableRow key={index}>
+                                    <TableRow key={user.id || index}>
                                         <TableCell>{user.name}</TableCell>
                                         <TableCell>{user.email}</TableCell>
                                         <TableCell>{user.phone}</TableCell>
@@ -165,7 +168,6 @@ function ViewUser() {
                 </Box>
             </Box>
 
-            {/* Only render EditModal when we have a valid selected user */}
             {selectedUser && (
                 <EditModal
                     open={openEditModal}

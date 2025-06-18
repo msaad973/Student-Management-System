@@ -18,6 +18,7 @@ const ViewDetails = () => {
     const [openEditModal, setOpenEditModal] = React.useState(false);
 
     const user = location.state?.user;
+    console.log(user);
     const users = useSelector((state) => state.user);
     const userIndex = users.findIndex((u) => u.email === user.email);
 
