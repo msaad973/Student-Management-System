@@ -1,35 +1,15 @@
-import React from 'react'
+import React from 'react';
 import {
     Box,
     Typography,
     List,
     ListItem,
-    ListItemText,
     Divider,
-} from '@mui/material'
+    Grid,
+} from '@mui/material';
 
 const QuizPage = () => {
-    // MOCK quiz data (replace with real data later)
-    const quiz = [
-        {
-            assignment: {
-                name: 'Math Quiz 1',
-                subjectCode: 'MATH101',
-                marks: 20,
-                startDate: '2025-06-10',
-                endDate: '2025-06-12',
-            },
-        },
-        {
-            assignment: {
-                name: 'Science Assignment',
-                subjectCode: 'SCI202',
-                marks: 25,
-                startDate: '2025-06-11',
-                endDate: '2025-06-13',
-            },
-        },
-    ]
+    const quiz = []; // Real data will come here later
 
     return (
         <Box p={3}>
@@ -42,11 +22,28 @@ const QuizPage = () => {
                 <List>
                     {quiz.map((item, index) => (
                         <React.Fragment key={index}>
-                            <ListItem>
-                                <ListItemText
-                                    primary={`${item.assignment.name} (${item.assignment.subjectCode})`}
-                                    secondary={`Marks: ${item.assignment.marks}, Duration: ${item.assignment.startDate} → ${item.assignment.endDate}`}
-                                />
+                            <ListItem alignItems="flex-start">
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} sm={6}>
+                                        <Typography variant="h6">
+                                            {/* Name */}
+                                        </Typography>
+                                        <Typography color="textSecondary">
+                                            {/* Subject Code */}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <Typography>
+                                            {/* Marks */}
+                                        </Typography>
+                                        <Typography>
+                                            {/* Start Date */}
+                                        </Typography>
+                                        <Typography>
+                                            {/* End Date */}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
                             </ListItem>
                             <Divider />
                         </React.Fragment>
@@ -54,7 +51,7 @@ const QuizPage = () => {
                 </List>
             )}
         </Box>
-    )
-}
+    );
+};
 
-export default QuizPage
+export default QuizPage;

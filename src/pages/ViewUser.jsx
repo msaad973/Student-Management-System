@@ -150,7 +150,6 @@ function ViewUser() {
                                                 </MenuItem>
                                                 <MenuItem onClick={() => {
                                                     setSelectedUserIndex(index);
-                                                    handleMenuClose();
                                                     setOpenEditModal(true);
                                                 }}>
                                                     Edit
