@@ -20,25 +20,30 @@ import StudentAssignments from './pages/StudentAssignment';
 
 function AppContent() {
   const location = useLocation();
-  const showSidebar = !['/signup', '/login'].includes(location.pathname);
+  
+  // Define pages that should NOT show the sidebar
+  const noSidebarPages = ['/signup', '/login','/','/edituser'];
+  
+  // Check if current path should show sidebar
+  const showSidebar = !noSidebarPages.includes(location.pathname);
 
   return (
     <>
       {showSidebar ? (
         <ResponsiveDrawer>
           <Routes>
-            <Route path="/edituser" element={<EditUser />} />
-            <Route path="/overview" element={<ViewUser />} />
             <Route path="/view-details" element={<ViewDetails />} />
             <Route path="/assignment" element={<AssignmentPage />} />
             <Route path="/quiz" element={<QuizPage />} />
-            <Route path="/" element={<ViewUser />} />
             <Route path="/student-assignments" element={<StudentAssignments />} />
             <Route path="*" element={<div style={{ textAlign: 'center', marginTop: '50px' }}>404 Page Not Found</div>} />
           </Routes>
         </ResponsiveDrawer>
       ) : (
-        <Routes>
+        <Routes> 
+          <Route path="/" element={<ViewUser />} />
+          <Route path="/view-details" element={<View-details />} />
+          <Route path="/edituser" element={<EditUser />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<div style={{ textAlign: 'center', marginTop: '50px' }}>404 Page Not Found</div>} />

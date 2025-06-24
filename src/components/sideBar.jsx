@@ -38,7 +38,7 @@ function ResponsiveDrawer({ children }) {
     };
 
     const menuItems = [
-        { text: 'Overview', icon: <DashboardIcon />, path: '/overview' },
+        { text: 'Overview', icon: <DashboardIcon />, path: '/view-details' },
         { text: 'Assignment', icon: <AssignmentIcon />, path: '/assignment' },
         { text: 'Quiz', icon: <QuizIcon />, path: '/quiz' },
     ];

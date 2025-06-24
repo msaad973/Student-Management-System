@@ -1,5 +1,5 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
     Box, Container, Typography, Card, CardContent, Button, IconButton, 
     AppBar, Toolbar, Chip, Grid, Divider
@@ -14,20 +14,44 @@ const ViewDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const params = useParams(); 
     const [openModal, setOpenModal] = React.useState(false);
     const [openEditModal, setOpenEditModal] = React.useState(false);
 
-    const user = location.state?.user;
     const users = useSelector((state) => state.user);
-    const userIndex = users.findIndex((u) => u.id === user.id);
     
-    // Get current user data from store (includes assignments)
+    const userId = location.state?.user?.id || params.userId;
+    const userIndex = users.findIndex((u) => u.id === userId);
+    const user = location.state?.user || users[userIndex];
+    
     const currentUser = users[userIndex];
+
+    useEffect(() => {
+        if (userIndex === -1 || !user) {
+            navigate('/view-details');
+        }
+    }, [userIndex, user, navigate]); 
+
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            if (userIndex !== -1) {
+                const originalUser = { ...user };
+                delete originalUser.assignments;
+                dispatch(updateuser({ index: userIndex, updatedUser: originalUser }));
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [userIndex, user, dispatch]);
 
     const handleDelete = () => {
         if (window.confirm('Are you sure you want to delete this record?')) {
             dispatch(deleteuser(userIndex));
-            navigate('/overview');
+            navigate('/view-details', { state: { user: currentUser } });
         }
     };
 
@@ -37,6 +61,8 @@ const ViewDetails = () => {
             assignment: assignmentData 
         }));
         setOpenModal(false);
+        // Navigate to /assignment and pass assignmentData in state
+        // navigate('/assignment', { state: { newAssignment: assignmentData } });
     };
 
     const handleEditSave = (updatedUser) => {
@@ -45,7 +71,7 @@ const ViewDetails = () => {
     };
 
     const handleViewAssignments = () => {
-        navigate('/student-assignments', { 
+        navigate('/assignment', { 
             state: { user: currentUser } 
         });
     };
@@ -69,6 +95,23 @@ const ViewDetails = () => {
         }
     };
 
+    if (!user || userIndex === -1) {
+        return (
+            <Container maxWidth="md">
+                <Box sx={{ textAlign: 'center', mt: 4 }}>
+                    <Typography variant="h6">User not found</Typography>
+                    <Button 
+                        variant="contained" 
+                        onClick={() => navigate('/')}
+                        sx={{ mt: 2 }}
+                    >
+                        Back to Overview
+                    </Button>
+                </Box>
+            </Container>
+        );
+    }
+
     return (
         <>
             <AppBar position="static" sx={{ mb: 4, bgcolor: '#223037' }}>
@@ -76,14 +119,20 @@ const ViewDetails = () => {
                     <IconButton edge="start" color="inherit" onClick={() => navigate(-1)}>
                         <ArrowBack />
                     </IconButton>
-                    <Typography variant="h6" sx={{ ml: 2 }}>
+                    <Typography variant="h6" sx={{ ml: 2, flexGrow: 1 }}>
                         View Student Details
                     </Typography>
+                    <Button
+                        color="inherit"
+                        onClick={() => navigate('/')}
+                        sx={{ textTransform: 'none' }}
+                    >
+                        Home
+                    </Button>
                 </Toolbar>
             </AppBar>
 
             <Container maxWidth="md">
-                {/* Student Information Card */}
                 <Card sx={{ p: 3, borderRadius: 3, boxShadow: 4, mb: 3, border: '2px solid #555' }}>
                     <CardContent>
                         <Typography
@@ -141,7 +190,6 @@ const ViewDetails = () => {
                     </CardContent>
                 </Card>
 
-                {/* Assignments Overview Card */}
                 <Card sx={{ p: 3, borderRadius: 3, boxShadow: 4, border: '2px solid #555' }}>
                     <CardContent>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -167,7 +215,7 @@ const ViewDetails = () => {
 
                         {currentUser?.assignments?.length > 0 ? (
                             <Box>
-                                {currentUser.assignments.slice(0, 3).map((assignment, index) => (
+                                {currentUser.assignments.slice(0, 2).map((assignment, index) => (
                                     <Box key={assignment.id}>
                                         <Box sx={{ p: 2, bgcolor: '#f5f5f5', borderRadius: 2 }}>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
@@ -235,7 +283,6 @@ const ViewDetails = () => {
                     </CardContent>
                 </Card>
 
-                {/* Modals */}
                 <AssignmentModal
                     open={openModal}
                     onClose={() => setOpenModal(false)}
@@ -253,5 +300,6 @@ const ViewDetails = () => {
         </>
     );
 };
+
 
 export default ViewDetails;

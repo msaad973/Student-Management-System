@@ -35,7 +35,6 @@ const AssignmentModal = ({ open, onClose, onSave }) => {
             [name]: value
         }));
         
-        // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({
                 ...prev,

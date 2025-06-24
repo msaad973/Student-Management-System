@@ -6,18 +6,42 @@ import {
     ListItem,
     Divider,
     Grid,
+    AppBar,
+    Toolbar,
+    IconButton,
+    Button
 } from '@mui/material';
+import { ArrowBack } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const QuizPage = () => {
-    const quiz = []; // Real data will come here later
+    const quiz = [];
+    const navigate = useNavigate();
 
     return (
         <Box p={3}>
+            <AppBar position="static" sx={{ mb: 4, bgcolor: '#223037' }}>
+                <Toolbar>
+                    <IconButton edge="start" color="inherit" onClick={() => navigate(-1)}>
+                        <ArrowBack />
+                    </IconButton>
+                    <Typography variant="h6" sx={{ ml: 2, flexGrow: 1 }}>
+                        View Quiz
+                    </Typography>
+                    <Button
+                        color="inherit"
+                        onClick={() => navigate('/')}
+                        sx={{ textTransform: 'none' }}
+                    >
+                        Home
+                    </Button>
+                </Toolbar>
+            </AppBar>
             <Typography variant="h4" gutterBottom>
                 Quiz
             </Typography>
             {quiz.length === 0 ? (
-                <Typography>No assignments found for this student.</Typography>
+                <Typography>No Quiz found for this student.</Typography>
             ) : (
                 <List>
                     {quiz.map((item, index) => (
@@ -26,21 +50,16 @@ const QuizPage = () => {
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={6}>
                                         <Typography variant="h6">
-                                            {/* Name */}
                                         </Typography>
                                         <Typography color="textSecondary">
-                                            {/* Subject Code */}
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <Typography>
-                                            {/* Marks */}
                                         </Typography>
                                         <Typography>
-                                            {/* Start Date */}
                                         </Typography>
                                         <Typography>
-                                            {/* End Date */}
                                         </Typography>
                                     </Grid>
                                 </Grid>

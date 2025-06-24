@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
-    Container, Button, Box, Table, TableBody, TableCell,
-    TableContainer, TableHead, TableRow, Paper, IconButton,
-    Menu, MenuItem
+    AppBar, Toolbar, Typography, Container, Button, Box, Table, TableBody, TableCell,
+    TableContainer, TableHead, TableRow, Paper, IconButton, Menu, MenuItem
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddUserModal from '../components/AddUserModal';
+import EditModal from '../components/EditModal';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { adduser, deleteuser, updateuser } from '../redux/slices/userSlice';
-import EditModal from '../components/EditModal';
 
 function ViewUser() {
     const [openDialog, setOpenDialog] = useState(false);
@@ -19,36 +18,39 @@ function ViewUser() {
         batch: '', year: '', gender: ''
     });
     const [openEditModal, setOpenEditModal] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const openMenu = Boolean(anchorEl);
 
     const dispatch = useDispatch();
     const users = useSelector((state) => state.user);
     const navigate = useNavigate();
 
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [selectedUserIndex, setSelectedUserIndex] = useState(null);
-    const openMenu = Boolean(anchorEl);
-
-    const handleMenuClick = (event, index) => {
+    const handleMenuClick = (event, user) => {
         setAnchorEl(event.currentTarget);
-        setSelectedUserIndex(index);
+        setSelectedUser(user);
     };
 
     const handleMenuClose = () => {
         setAnchorEl(null);
-        setSelectedUserIndex(null);
     };
 
     const handleSaveUser = () => {
+        if (!newUser.name || !newUser.email) {
+            alert("Name and Email are required.");
+            return;
+        }
+
         const userWithId = {
             ...newUser,
-            id: Date.now() 
+            id: Date.now()
         };
         dispatch(adduser(userWithId));
         closeModal();
     };
 
-    const handleDeleteUser = (index) => {
-        dispatch(deleteuser(index));
+    const handleDeleteUser = (id) => {
+        dispatch(deleteuser(id));
         handleMenuClose();
     };
 
@@ -62,123 +64,142 @@ function ViewUser() {
     };
 
     const handleEditSave = (updatedUser) => {
-        if (selectedUserIndex !== null) {
-            dispatch(updateuser({ index: selectedUserIndex, updatedUser }));
-        }
+        dispatch(updateuser({ id: selectedUser.id, updatedUser }));
         setOpenEditModal(false);
-        setSelectedUserIndex(null); 
+        setSelectedUser(null);
     };
 
-    const selectedUser = selectedUserIndex !== null ? users[selectedUserIndex] : null;
-
     return (
-        <Container maxWidth="lg">
-            <Box sx={{ mb: 3 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+        <>
+            <AppBar position="static" sx={{ backgroundColor: '#333', mb: 3 }}>
+                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="h6" component="div">
+                        Student Management System
+                    </Typography>
                     <Button
-                        onClick={() => setOpenDialog(true)}
-                        variant="contained"
+                        variant="outlined"
+                        color="inherit"
+                        onClick={() => navigate('/')}
+                    >
+                        Logout
+                    </Button>
+                </Toolbar>
+            </AppBar>
+
+            <Container maxWidth="lg">
+                <Box sx={{ mb: 3 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                        <Button
+                            onClick={() => setOpenDialog(true)}
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#333',
+                                color: '#fff',
+                                '&:hover': { backgroundColor: '#555' }
+                            }}
+                        >
+                            Add Student
+                        </Button>
+                    </Box>
+
+                    <AddUserModal
+                        open={openDialog}
+                        onClose={closeModal}
+                        onSave={handleSaveUser}
+                        newUser={newUser}
+                        setNewUser={setNewUser}
+                    />
+
+                    <Box
                         sx={{
-                            backgroundColor: '#333',
-                            color: '#fff',
-                            '&:hover': { backgroundColor: '#555' }
+                            backgroundColor: "#555",
+                            borderRadius: "15px",
+                            p: 2,
                         }}
                     >
-                        Add Student
-                    </Button>
-                </Box>
-
-                <AddUserModal
-                    open={openDialog}
-                    onClose={closeModal}
-                    onSave={handleSaveUser}
-                    newUser={newUser}
-                    setNewUser={setNewUser}
-                />
-
-                <Box
-                    sx={{
-                        backgroundColor: "#555",
-                        borderRadius: "15px",
-                        p: 2
-                    }}
-                >
-                    <h3 style={{
-                        fontSize: '24px',
-                        fontWeight: 'bold',
-                        marginLeft: '10px',
-                        color: '#fff',
-                        marginTop: 0,
-                        marginBottom: '16px'
-                    }}>
-                        Students:
-                    </h3>
-                    <TableContainer component={Paper}>
-                        <Table>
-                            <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
-                                <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Email</TableCell>
-                                    <TableCell>Attendance</TableCell>
-                                    <TableCell>Phone</TableCell>
-                                    <TableCell>CGPA</TableCell>
-                                    <TableCell>Action</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {users.map((user, index) => (
-                                    <TableRow key={user.id || index}>
-                                        <TableCell>{user.name}</TableCell>
-                                        <TableCell>{user.email}</TableCell>
-                                        <TableCell>{user.phone}</TableCell>
-                                        <TableCell>{user.cgpa}</TableCell>
-                                        <TableCell>{user.attendance}</TableCell>
-                                        <TableCell>
-                                            <IconButton onClick={(e) => handleMenuClick(e, index)}>
-                                                <MoreVertIcon />
-                                            </IconButton>
-                                            <Menu
-                                                anchorEl={anchorEl}
-                                                open={openMenu && selectedUserIndex === index}
-                                                onClose={handleMenuClose}
-                                            >
-                                                <MenuItem onClick={() => {
-                                                    navigate('/view-details', { state: { user: users[index] } });
-                                                    handleMenuClose();
-                                                }}>
-                                                    View
-                                                </MenuItem>
-                                                <MenuItem onClick={() => {
-                                                    setSelectedUserIndex(index);
-                                                    setOpenEditModal(true);
-                                                }}>
-                                                    Edit
-                                                </MenuItem>
-                                                <MenuItem onClick={() => handleDeleteUser(index)}>
-                                                    Delete
-                                                </MenuItem>
-                                            </Menu>
-                                        </TableCell>
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                fontWeight: 'bold',
+                                color: '#fff',
+                                mb: 2,
+                                ml: 1
+                            }}
+                        >
+                            Students:
+                        </Typography>
+                        <TableContainer component={Paper} >
+                            <Table>
+                                <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+                                    <TableRow>
+                                        <TableCell>Name</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell>Attendance</TableCell>
+                                        <TableCell>Phone</TableCell>
+                                        <TableCell>CGPA</TableCell>
+                                        <TableCell>Action</TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                                </TableHead>
+                                <TableBody>
+                                    {users.map((user) => (
+                                        <TableRow
+                                            key={user.id}
+                                            hover
+                                            sx={{ transition: '0.3s', '&:hover': { backgroundColor: '#f9f9f9' } }}
+                                        >
+                                            <TableCell>{user.name}</TableCell>
+                                            <TableCell>{user.email}</TableCell>
+                                            <TableCell>{user.attendance}</TableCell>
+                                            <TableCell>{user.phone}</TableCell>
+                                            <TableCell>{user.cgpa}</TableCell>
+                                            <TableCell>
+                                                <IconButton onClick={(e) => handleMenuClick(e, user)}>
+                                                    <MoreVertIcon />
+                                                </IconButton>
+                                                <Menu
+                                                    anchorEl={anchorEl}
+                                                    open={openMenu && selectedUser?.id === user.id}
+                                                    onClose={handleMenuClose}
+                                                >
+                                                    <MenuItem onClick={() => {
+                                                        navigate('/view-details', { state: { user } });
+                                                        handleMenuClose();
+                                                    }}>
+                                                        View
+                                                    </MenuItem>
+                                                    <MenuItem onClick={() => {
+                                                        handleMenuClose();
+                                                        setSelectedUser(user);
+                                                        setOpenEditModal(true);
+                                                    }}>
+                                                        Edit
+                                                    </MenuItem>
+                                                    <MenuItem onClick={() => handleDeleteUser(user.id)}>
+                                                        Delete
+                                                    </MenuItem>
+                                                </Menu>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
                 </Box>
-            </Box>
 
-            {selectedUser && (
-                <EditModal
-                    open={openEditModal}
-                    onClose={() => {
-                        setOpenEditModal(false);
-                        setSelectedUserIndex(null);
-                    }}
-                    user={selectedUser}
-                    onSave={handleEditSave}
-                />
-            )}
-        </Container>
+                {selectedUser && (
+                    <EditModal
+                        open={openEditModal}
+                        onClose={() => {
+                            setOpenEditModal(false);
+                            setSelectedUser(null);
+                        }}
+                        user={selectedUser}
+                        onSave={handleEditSave}
+                    />
+                )}
+            </Container>
+        </>
     );
 }
 
