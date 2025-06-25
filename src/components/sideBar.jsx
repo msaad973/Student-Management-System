@@ -34,6 +34,7 @@ function ResponsiveDrawer({ children }) {
 
     const handleLogout = () => {
         localStorage.removeItem('userToken');
+        localStorage.removeItem('userEmail');
         navigate('/login');
     };
 

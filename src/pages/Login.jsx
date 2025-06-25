@@ -11,8 +11,11 @@ export default function Login() {
             await signInWithEmailAndPassword(auth, email, password);
             console.log("User Info:", auth.currentUser);
             console.log("Token:", auth.currentUser.accessToken);
-            navigate("/ViewUser");
-            
+            // save the user token in localStorage
+            localStorage.setItem("userToken", auth.currentUser.accessToken);
+            // save the user email in localStorage
+            localStorage.setItem("userEmail", auth.currentUser.email);
+            navigate("/");
         } catch (error) {
             alert(error.message);
         }

@@ -69,6 +69,12 @@ function ViewUser() {
         setSelectedUser(null);
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('userEmail');
+        navigate('/login');
+    };
+
     return (
         <>
             <AppBar position="static" sx={{ backgroundColor: '#333', mb: 3 }}>
@@ -76,13 +82,16 @@ function ViewUser() {
                     <Typography variant="h6" component="div">
                         Student Management System
                     </Typography>
-                    <Button
-                        variant="outlined"
-                        color="inherit"
-                        onClick={() => navigate('/')}
-                    >
-                        Logout
-                    </Button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                        <p>{localStorage.getItem("userEmail")}</p>
+                        <Button
+                            variant="outlined"
+                            color="inherit"
+                            onClick={handleLogout}
+                        >
+                            Logout
+                        </Button>
+                    </div>
                 </Toolbar>
             </AppBar>
 
