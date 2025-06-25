@@ -11,14 +11,23 @@ import {
     Divider
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const QuizPage = () => {
     const users = useSelector((state) => state.user);
-    // Collect all quizzes from all users
-    const allQuizzes = users.flatMap(u => u.quizzes || []);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Get selected user from navigation state
+    const selectedUser = location.state?.user;
+    // Find the user in redux state (to get latest quizzes)
+    const user = selectedUser
+        ? users.find(u => u.id === selectedUser.id)
+        : null;
+
+    // Only show quizzes for the selected user
+    const allQuizzes = user?.quizzes || [];
 
     return (
         <Box p={3}>
@@ -40,7 +49,7 @@ const QuizPage = () => {
                 </Toolbar>
             </AppBar>
             <Typography variant="h4" gutterBottom>
-                Quiz
+                {user ? `${user.name}'s Quiz` : 'Quiz'}
             </Typography>
             {allQuizzes.length === 0 ? (
                 <Typography>No Quiz found for this student.</Typography>

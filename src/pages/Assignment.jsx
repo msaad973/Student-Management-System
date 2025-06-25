@@ -1,23 +1,27 @@
 // src/pages/AssignmentPage.jsx
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 import {
     Box, Typography, Card, CardContent, Chip, Divider, AppBar, Toolbar, IconButton, Button
 } from '@mui/material';
-import { ArrowBack, Search } from '@mui/icons-material';
+import { ArrowBack, SentimentDissatisfied } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const AssignmentPage = () => {
     const users = useSelector((state) => state.user);
     const navigate = useNavigate();
-    const [searchTerm, setSearchTerm] = useState('');
-    // Collect all assignments from all users
-    const allAssignments = users.flatMap(u => u.assignments || []);
+    const location = useLocation();
 
-    // Filter assignments by student name
-    const filteredAssignments = allAssignments.filter(a =>
-        a.studentName?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Get selected user from navigation state
+    const selectedUser = location.state?.user;
+
+    // Find the user in redux state (to get latest assignments)
+    const user = selectedUser
+        ? users.find(u => u.id === selectedUser.id)
+        : null;
+
+    // Only show assignments for the selected user
+    const allAssignments = user?.assignments || [];
 
     const getPriorityColor = (priority) => {
         switch (priority) {
@@ -58,30 +62,15 @@ const AssignmentPage = () => {
                 </Toolbar>
             </AppBar>
             <Typography variant="h4" gutterBottom>
-                Assignments
+                {user ? `${user.name}'s Assignments` : 'Assignments'}
             </Typography>
-            {/* Search Bar */}
-            <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', maxWidth: 600 }}>
-                <Search sx={{ mr: 1, color: 'text.secondary' }} />
-                <input
-                    type="text"
-                    placeholder="Search by student name..."
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '6px',
-                        border: '1px solid #ccc',
-                        outline: 'none',
-                        fontSize: '1.1rem'
-                    }}
-                />
-            </Box>
-            {filteredAssignments.length === 0 ? (
-                <Typography>No assignments found for this student.</Typography>
+            {allAssignments.length === 0 ? (
+                <Box sx={{ textAlign: 'center', mt: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <SentimentDissatisfied sx={{ fontSize: 80, color: '#bbb', mb: 2 }} />
+                    <Typography variant="h6" sx={{ mb: 1 }}>No assignments found for this student.</Typography>
+                </Box>
             ) : (
-                filteredAssignments.map((assignment, idx) => (
+                allAssignments.map((assignment, idx) => (
                     <Card key={assignment.id || idx} sx={{ mb: 3, borderRadius: 3, boxShadow: 4, border: '2px solid #555' }}>
                         <CardContent>
                             <Box sx={{ p: 2, bgcolor: '#f5f5f5', borderRadius: 2 }}>
@@ -122,5 +111,11 @@ const AssignmentPage = () => {
         </Box>
     );
 };
+
+
+
+
+
+
 
 export default AssignmentPage;

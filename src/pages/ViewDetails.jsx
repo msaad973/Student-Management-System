@@ -110,7 +110,8 @@ const ViewDetails = () => {
     };
 
     const handleViewQuizMenu = () => {
-        setOpenQuizModal(true);
+        // Always pass currentUser in navigation state
+        navigate('/quiz', { state: { user: currentUser } });
         handleMenuClose();
     };
 
@@ -344,7 +345,8 @@ const ViewDetails = () => {
                                 <Button
                                     variant="outlined"
                                     startIcon={<Visibility />}
-                                    onClick={() => navigate('/quiz')}
+                                    // Always pass currentUser in navigation state
+                                    onClick={() => navigate('/quiz', { state: { user: currentUser } })}
                                     sx={{ textTransform: 'none' }}
                                 >
                                     View All Quiz

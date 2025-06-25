@@ -120,7 +120,7 @@ const StudentAssignments = () => {
                         <ArrowBack />
                     </IconButton>
                     <Typography variant="h6" sx={{ ml: 2 }}>
-                        {currentUser.name} Assignments
+                        {currentUser.name}'s Assignments
                     </Typography>
                 </Toolbar>
             </AppBar>

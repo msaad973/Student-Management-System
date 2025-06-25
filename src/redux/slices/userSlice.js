@@ -23,15 +23,28 @@ const userSlice = createSlice({
                 // Merge quizzes arrays if both exist, otherwise use whichever exists
                 let mergedQuizzes = [];
                 if (prevUser.quizzes && updatedUser.quizzes) {
-                    // Merge and deduplicate by some unique property if needed
-                    mergedQuizzes = [...prevUser.quizzes, ...updatedUser.quizzes.filter(q => !prevUser.quizzes.some(pq => JSON.stringify(pq) === JSON.stringify(q)))];
+                    mergedQuizzes = [
+                        ...prevUser.quizzes,
+                        ...updatedUser.quizzes.filter(q => !prevUser.quizzes.some(pq => JSON.stringify(pq) === JSON.stringify(q)))
+                    ];
                 } else {
                     mergedQuizzes = updatedUser.quizzes || prevUser.quizzes || [];
+                }
+                // Merge assignments arrays if both exist, otherwise use whichever exists
+                let mergedAssignments = [];
+                if (prevUser.assignments && updatedUser.assignments) {
+                    mergedAssignments = [
+                        ...prevUser.assignments,
+                        ...updatedUser.assignments.filter(a => !prevUser.assignments.some(pa => JSON.stringify(pa) === JSON.stringify(a)))
+                    ];
+                } else {
+                    mergedAssignments = updatedUser.assignments || prevUser.assignments || [];
                 }
                 state[index] = {
                     ...prevUser,
                     ...updatedUser,
-                    quizzes: mergedQuizzes
+                    quizzes: mergedQuizzes,
+                    assignments: mergedAssignments
                 };
             }
         },
