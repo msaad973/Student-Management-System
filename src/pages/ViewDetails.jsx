@@ -21,6 +21,7 @@ const ViewDetails = () => {
     const [openQuizModal, setOpenQuizModal] = React.useState(false);
     const [openEditModal, setOpenEditModal] = React.useState(false);
     const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
+    const [quizModalData, setQuizModalData] = React.useState(null);
 
     const users = useSelector((state) => state.user);
     
@@ -71,10 +72,21 @@ const ViewDetails = () => {
     // Add quizzes to user object (assuming quizzes are stored as user.quizzes)
     const quizzes = currentUser?.quizzes || [];
 
+    const handleViewQuizMenu = () => {
+        setQuizModalData(null); // Reset modal data
+        setOpenQuizModal(true);
+        handleMenuClose();
+    };
+
+    // Add this function for the "View All Quiz" button
+    const handleViewAllQuiz = () => {
+        navigate('/quiz', { state: { user: currentUser } });
+    };
+
     const handleSaveQuiz = (quizData) => {
         // Add student name to quizData
         const quizWithStudent = { ...quizData, studentName: user.name };
-        // If you have a separate addQuizToUser action, use it. Otherwise, add to user.quizzes array.
+        setQuizModalData(quizWithStudent); // Show the quiz data in the modal after save
         dispatch(updateuser({
             index: userIndex,
             updatedUser: {
@@ -82,7 +94,14 @@ const ViewDetails = () => {
                 quizzes: [...(user.quizzes || []), quizWithStudent]
             }
         }));
+        // Keep modal open to show the data
+        // setOpenQuizModal(false); // Do not close modal immediately
+    };
+
+    // To close the modal after viewing the assigned quiz
+    const handleQuizModalClose = () => {
         setOpenQuizModal(false);
+        setQuizModalData(null);
     };
 
     const handleEditSave = (updatedUser) => {
@@ -106,12 +125,6 @@ const ViewDetails = () => {
 
     const handleAddAssignmentMenu = () => {
         setOpenModal(true);
-        handleMenuClose();
-    };
-
-    const handleViewQuizMenu = () => {
-        // Always pass currentUser in navigation state
-        navigate('/quiz', { state: { user: currentUser } });
         handleMenuClose();
     };
 
@@ -345,8 +358,7 @@ const ViewDetails = () => {
                                 <Button
                                     variant="outlined"
                                     startIcon={<Visibility />}
-                                    // Always pass currentUser in navigation state
-                                    onClick={() => navigate('/quiz', { state: { user: currentUser } })}
+                                    onClick={handleViewAllQuiz}
                                     sx={{ textTransform: 'none' }}
                                 >
                                     View All Quiz
@@ -365,6 +377,9 @@ const ViewDetails = () => {
                                                 </Typography>
                                             </Box>
                                             <Typography variant="body2" color="text.secondary">
+                                                Student Name: {quiz.studentName || ''}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
                                                 Subject: {quiz.subject}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
@@ -379,9 +394,7 @@ const ViewDetails = () => {
                                             <Typography variant="body2" color="text.secondary">
                                                 Question 2: {quiz.question2 || ''}
                                             </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                Student Name: {quiz.studentName || ''}
-                                            </Typography>
+                                            
                                         </Box>
                                         {index < Math.min(quizzes.length - 1, 1) && (
                                             <Divider sx={{ my: 2 }} />
@@ -412,9 +425,10 @@ const ViewDetails = () => {
 
                 <QuizModal
                     open={openQuizModal}
-                    onClose={() => setOpenQuizModal(false)}
+                    onClose={handleQuizModalClose}
                     onSave={handleSaveQuiz}
                     currentUser={currentUser}
+                    quizData={quizModalData}
                 />
 
                 <EditModal

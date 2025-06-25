@@ -1,78 +1,79 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
 const userSlice = createSlice({
     name: 'user',
     initialState: [],
     reducers: {
         adduser: (state, action) => {
-            console.log('action', action.payload);
-            // Initialize assignments array for new user
-            const newUser = {
-                ...action.payload,
-                assignments: []
-            };
-            state.push(newUser);
+            const exists = state.find(user => user.id === action.payload.id);
+            if (!exists) {
+                const newUser = {
+                    ...action.payload,
+                    assignments: [],
+                    quizzes: []
+                };
+                state.push(newUser);
+            }
         },
+
         deleteuser: (state, action) => {
             return state.filter((_, index) => index !== action.payload);
         },
+
         updateuser: (state, action) => {
             const { index, updatedUser } = action.payload;
-            if (index !== -1) {
-                const prevUser = state[index];
-                // Merge quizzes arrays if both exist, otherwise use whichever exists
-                let mergedQuizzes = [];
-                if (prevUser.quizzes && updatedUser.quizzes) {
-                    mergedQuizzes = [
-                        ...prevUser.quizzes,
-                        ...updatedUser.quizzes.filter(q => !prevUser.quizzes.some(pq => JSON.stringify(pq) === JSON.stringify(q)))
+            const prevUser = state[index];
+
+            if (prevUser) {
+                const mergeUnique = (oldArr = [], newArr = []) => {
+                    return [
+                        ...oldArr,
+                        ...newArr.filter(
+                            item => !oldArr.some(oldItem => JSON.stringify(oldItem) === JSON.stringify(item))
+                        )
                     ];
-                } else {
-                    mergedQuizzes = updatedUser.quizzes || prevUser.quizzes || [];
-                }
-                // Merge assignments arrays if both exist, otherwise use whichever exists
-                let mergedAssignments = [];
-                if (prevUser.assignments && updatedUser.assignments) {
-                    mergedAssignments = [
-                        ...prevUser.assignments,
-                        ...updatedUser.assignments.filter(a => !prevUser.assignments.some(pa => JSON.stringify(pa) === JSON.stringify(a)))
-                    ];
-                } else {
-                    mergedAssignments = updatedUser.assignments || prevUser.assignments || [];
-                }
-                state[index] = {
+                };
+
+                const mergedUser = {
                     ...prevUser,
                     ...updatedUser,
-                    quizzes: mergedQuizzes,
-                    assignments: mergedAssignments
+                    quizzes: mergeUnique(prevUser.quizzes, updatedUser.quizzes),
+                    assignments: mergeUnique(prevUser.assignments, updatedUser.assignments)
                 };
+
+                state[index] = mergedUser;
             }
         },
+
         addAssignmentToUser: (state, action) => {
             const { userId, assignment } = action.payload;
             const user = state.find(u => u.id === userId);
+
             if (user) {
-                if (!user.assignments) {
-                    user.assignments = [];
-                }
+                user.assignments = user.assignments || [];
                 user.assignments.push({
                     ...assignment,
-                    id: Date.now(), 
-                    assignedDate: new Date().toISOString()
+                    id: Date.now(),
+                    assignedDate: new Date().toISOString(),
+                    status: 'pending'
                 });
             }
         },
+
         removeAssignmentFromUser: (state, action) => {
             const { userId, assignmentId } = action.payload;
             const user = state.find(u => u.id === userId);
+
             if (user && user.assignments) {
                 user.assignments = user.assignments.filter(a => a.id !== assignmentId);
             }
         },
+
         updateAssignmentStatus: (state, action) => {
             const { userId, assignmentId, status } = action.payload;
             const user = state.find(u => u.id === userId);
-            if (user && user.assignments) {
+
+            if (user?.assignments) {
                 const assignment = user.assignments.find(a => a.id === assignmentId);
                 if (assignment) {
                     assignment.status = status;
@@ -83,13 +84,13 @@ const userSlice = createSlice({
     }
 });
 
-export const { 
-    adduser, 
-    deleteuser, 
-    updateuser, 
-    addAssignmentToUser, 
-    removeAssignmentFromUser, 
-    updateAssignmentStatus 
+export const {
+    adduser,
+    deleteuser,
+    updateuser,
+    addAssignmentToUser,
+    removeAssignmentFromUser,
+    updateAssignmentStatus
 } = userSlice.actions;
 
 export default userSlice.reducer;

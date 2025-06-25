@@ -80,6 +80,8 @@ const QuizModal = ({ open, onClose, onSave, currentUser }) => {
             onSave(formData);
             handleReset();
         }
+
+        onClose();
     };
 
     const handleReset = () => {
