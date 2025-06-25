@@ -2,13 +2,15 @@ import React, { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
     Box, Container, Typography, Card, CardContent, Button, IconButton, 
-    AppBar, Toolbar, Chip, Grid, Divider
+    AppBar, Toolbar, Chip, Grid, Divider, Menu, MenuItem
 } from '@mui/material';
-import { ArrowBack, Assignment, Visibility } from '@mui/icons-material';
+import { ArrowBack, Assignment, Visibility, Quiz as QuizIcon, SentimentDissatisfied } from '@mui/icons-material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteuser, updateuser, addAssignmentToUser } from '../redux/slices/userSlice';
 import AssignmentModal from '../components/AssignmentModal';
 import EditModal from '../components/EditModal';
+import QuizModal from '../components/QuizModal';
 
 const ViewDetails = () => {
     const location = useLocation();
@@ -16,7 +18,9 @@ const ViewDetails = () => {
     const dispatch = useDispatch();
     const params = useParams(); 
     const [openModal, setOpenModal] = React.useState(false);
+    const [openQuizModal, setOpenQuizModal] = React.useState(false);
     const [openEditModal, setOpenEditModal] = React.useState(false);
+    const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
 
     const users = useSelector((state) => state.user);
     
@@ -61,8 +65,24 @@ const ViewDetails = () => {
             assignment: assignmentData 
         }));
         setOpenModal(false);
-        // Navigate to /assignment and pass assignmentData in state
-        // navigate('/assignment', { state: { newAssignment: assignmentData } });
+        
+    };
+
+    // Add quizzes to user object (assuming quizzes are stored as user.quizzes)
+    const quizzes = currentUser?.quizzes || [];
+
+    const handleSaveQuiz = (quizData) => {
+        // Add student name to quizData
+        const quizWithStudent = { ...quizData, studentName: user.name };
+        // If you have a separate addQuizToUser action, use it. Otherwise, add to user.quizzes array.
+        dispatch(updateuser({
+            index: userIndex,
+            updatedUser: {
+                ...user,
+                quizzes: [...(user.quizzes || []), quizWithStudent]
+            }
+        }));
+        setOpenQuizModal(false);
     };
 
     const handleEditSave = (updatedUser) => {
@@ -74,6 +94,24 @@ const ViewDetails = () => {
         navigate('/assignment', { 
             state: { user: currentUser } 
         });
+    };
+
+    const handleMenuOpen = (event) => {
+        setMenuAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setMenuAnchorEl(null);
+    };
+
+    const handleAddAssignmentMenu = () => {
+        setOpenModal(true);
+        handleMenuClose();
+    };
+
+    const handleViewQuizMenu = () => {
+        setOpenQuizModal(true);
+        handleMenuClose();
     };
 
     const getPriorityColor = (priority) => {
@@ -98,15 +136,19 @@ const ViewDetails = () => {
     if (!user || userIndex === -1) {
         return (
             <Container maxWidth="md">
-                <Box sx={{ textAlign: 'center', mt: 4 }}>
-                    <Typography variant="h6">User not found</Typography>
-                    <Button 
-                        variant="contained" 
-                        onClick={() => navigate('/')}
-                        sx={{ mt: 2 }}
-                    >
-                        Back to Overview
-                    </Button>
+                <AppBar position="static" sx={{ mb: 4, bgcolor: '#223037',ml: 2 }}>
+                    <Toolbar>
+                        <IconButton edge="start" color="inherit" onClick={() => navigate('/')}>
+                            <ArrowBack />
+                        </IconButton>
+                        <Typography variant="h6" sx={{ ml: 2, flexGrow: 1 }}>
+                            Overview
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <Box sx={{ textAlign: 'center', mt: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <SentimentDissatisfied sx={{ fontSize: 80, color: '#bbb', mb: 2 }} />
+                    <Typography variant="h6" sx={{ mb: 1 }}>No Record Found</Typography>
                 </Box>
             </Container>
         );
@@ -178,14 +220,17 @@ const ViewDetails = () => {
                             >
                                 Delete Student
                             </Button>
-                            <Button
-                                variant="contained"
-                                startIcon={<Assignment />}
-                                onClick={() => setOpenModal(true)}
-                                sx={{ textTransform: 'none', bgcolor: '#4caf50' }}
+                            <IconButton onClick={handleMenuOpen}>
+                                <MoreVertIcon />
+                            </IconButton>
+                            <Menu
+                                anchorEl={menuAnchorEl}
+                                open={Boolean(menuAnchorEl)}
+                                onClose={handleMenuClose}
                             >
-                                Add Assignment
-                            </Button>
+                                <MenuItem onClick={handleAddAssignmentMenu}>Add Assignment</MenuItem>
+                                <MenuItem onClick={handleViewQuizMenu}>Add Quiz</MenuItem>
+                            </Menu>
                         </Box>
                     </CardContent>
                 </Card>
@@ -283,10 +328,91 @@ const ViewDetails = () => {
                     </CardContent>
                 </Card>
 
+                {/* Quiz Container */} 
+                <Card sx={{ p: 3, borderRadius: 3, boxShadow: 4, border: '2px solid #555', mt: 3 }}>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                            <Typography
+                                variant="h6"
+                                fontWeight="bold"
+                                sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                            >
+                                <QuizIcon sx={{ mr: 1 }} />
+                                Quiz ({quizzes.length || 0})
+                            </Typography>
+                            {quizzes.length > 0 && (
+                                <Button
+                                    variant="outlined"
+                                    startIcon={<Visibility />}
+                                    onClick={() => navigate('/quiz')}
+                                    sx={{ textTransform: 'none' }}
+                                >
+                                    View All Quiz
+                                </Button>
+                            )}
+                        </Box>
+                        {quizzes.length > 0 ? (
+                            <Box>
+                                {quizzes.slice(0, 2).map((quiz, index) => (
+                                    <Box key={index}>
+                                        <Box sx={{ p: 2, bgcolor: '#f5f5f5', borderRadius: 2 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                                <QuizIcon sx={{ color: '#1976d2', mr: 1 }} />
+                                                <Typography variant="subtitle1" fontWeight="bold">
+                                                    {quiz.studentName}
+                                                </Typography>
+                                            </Box>
+                                            <Typography variant="body2" color="text.secondary">
+                                                Subject: {quiz.subject}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                Due Date: {quiz.dueDate ? new Date(quiz.dueDate).toLocaleDateString() : ''}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                Marks: {quiz.marks || 'Not graded'}{quiz.totalMarks ? `/${quiz.totalMarks}` : ''}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                Question 1: {quiz.question1 || ''}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                Question 2: {quiz.question2 || ''}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                Student Name: {quiz.studentName || ''}
+                                            </Typography>
+                                        </Box>
+                                        {index < Math.min(quizzes.length - 1, 1) && (
+                                            <Divider sx={{ my: 2 }} />
+                                        )}
+                                    </Box>
+                                ))}
+                            </Box>
+                        ) : (
+                            <Box sx={{ textAlign: 'center', py: 4 }}>
+                                <QuizIcon sx={{ fontSize: 64, color: '#ccc', mb: 2 }} />
+                                <Typography variant="h6" color="text.secondary" gutterBottom>
+                                    No Quiz Yet
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                                    This student hasn't been assigned any quiz yet.
+                                </Typography>
+                            </Box>
+                        )}
+                    </CardContent>
+                </Card>
+
                 <AssignmentModal
                     open={openModal}
                     onClose={() => setOpenModal(false)}
                     onSave={handleSaveAssignment}
+                    currentUser={currentUser}
+                />
+
+                <QuizModal
+                    open={openQuizModal}
+                    onClose={() => setOpenQuizModal(false)}
+                    onSave={handleSaveQuiz}
+                    currentUser={currentUser}
                 />
 
                 <EditModal

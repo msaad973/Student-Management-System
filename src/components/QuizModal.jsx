@@ -14,26 +14,22 @@ import {
     Typography
 } from '@mui/material';
 
-const AssignmentModal = ({ open, onClose, onSave, currentUser }) => {
+const QuizModal = ({ open, onClose, onSave, currentUser }) => {
     const [formData, setFormData] = useState({
-        studentName: currentUser?.name || '',
+        title: '',
         description: '',
         subject: '',
         dueDate: '',
         priority: 'Medium',
         status: 'Pending',
         marks: '',
-        totalMarks: ''
+        totalMarks: '',
+        question1: '',
+        question2: '',
+        studentName: currentUser?.name || ''
     });
 
     const [errors, setErrors] = useState({});
-
-    React.useEffect(() => {
-        setFormData(prev => ({
-            ...prev,
-            studentName: currentUser?.name || ''
-        }));
-    }, [currentUser]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -41,6 +37,7 @@ const AssignmentModal = ({ open, onClose, onSave, currentUser }) => {
             ...prev,
             [name]: value
         }));
+        
         if (errors[name]) {
             setErrors(prev => ({
                 ...prev,
@@ -51,27 +48,34 @@ const AssignmentModal = ({ open, onClose, onSave, currentUser }) => {
 
     const validateForm = () => {
         const newErrors = {};
-        if (!formData.studentName.trim()) {
-            newErrors.studentName = 'Student name is required';
+        
+        if (!formData.title.trim()) {
+            newErrors.title = 'Quiz title is required';
         }
+        
         if (!formData.subject.trim()) {
             newErrors.subject = 'Subject is required';
         }
+        
         if (!formData.dueDate) {
             newErrors.dueDate = 'Due date is required';
         }
+        
         if (formData.totalMarks && isNaN(formData.totalMarks)) {
             newErrors.totalMarks = 'Total marks must be a number';
         }
+        
         if (formData.marks && isNaN(formData.marks)) {
             newErrors.marks = 'Marks must be a number';
         }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
         if (validateForm()) {
             onSave(formData);
             handleReset();
@@ -80,14 +84,17 @@ const AssignmentModal = ({ open, onClose, onSave, currentUser }) => {
 
     const handleReset = () => {
         setFormData({
-            studentName: currentUser?.name || '',
+            title: '',
             description: '',
             subject: '',
             dueDate: '',
             priority: 'Medium',
             status: 'Pending',
             marks: '',
-            totalMarks: ''
+            totalMarks: '',
+            question1: '',
+            question2: '',
+            studentName: currentUser?.name || ''
         });
         setErrors({});
     };
@@ -97,27 +104,33 @@ const AssignmentModal = ({ open, onClose, onSave, currentUser }) => {
         onClose();
     };
 
+    // Update studentName when currentUser changes
+    React.useEffect(() => {
+        setFormData(prev => ({
+            ...prev,
+            studentName: currentUser?.name || ''
+        }));
+    }, [currentUser]);
+
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
             <DialogTitle>
                 <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                    Assign New Assignment
+                    Assign New Quiz
                 </Typography>
             </DialogTitle>
-            
             <form onSubmit={handleSubmit}>
                 <DialogContent>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
                         <TextField
-                            name="studentName"
-                            label="Student Name"
-                            value={formData.studentName}
+                            name="title"
+                            label="Quiz Title"
+                            value={formData.title}
                             onChange={handleChange}
-                            error={!!errors.studentName}
-                            helperText={errors.studentName}
+                            error={!!errors.title}
+                            helperText={errors.title}
                             fullWidth
                             required
-                            InputProps={{ readOnly: true }}
                         />
                         
                         <TextField
@@ -211,6 +224,30 @@ const AssignmentModal = ({ open, onClose, onSave, currentUser }) => {
                                 fullWidth
                             />
                         </Box>
+
+                        <TextField
+                            name="question1"
+                            label="Question 1"
+                            value={formData.question1}
+                            onChange={handleChange}
+                            fullWidth
+                        />
+                        <TextField
+                            name="question2"
+                            label="Question 2"
+                            value={formData.question2}
+                            onChange={handleChange}
+                            fullWidth
+                        />
+                        <TextField
+                            name="studentName"
+                            label="Student Name"
+                            value={formData.studentName}
+                            onChange={handleChange}
+                            fullWidth
+                            required
+                            InputProps={{ readOnly: true }}
+                        />
                     </Box>
                 </DialogContent>
                 
@@ -219,7 +256,7 @@ const AssignmentModal = ({ open, onClose, onSave, currentUser }) => {
                         Cancel
                     </Button>
                     <Button type="submit" variant="contained" color="primary">
-                        Assign Assignment
+                        Assign Quiz
                     </Button>
                 </DialogActions>
             </form>
@@ -227,4 +264,4 @@ const AssignmentModal = ({ open, onClose, onSave, currentUser }) => {
     );
 };
 
-export default AssignmentModal;
+export default QuizModal;

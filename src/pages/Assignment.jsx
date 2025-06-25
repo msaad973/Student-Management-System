@@ -1,17 +1,23 @@
 // src/pages/AssignmentPage.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Box, Typography, Card, CardContent, Chip, Divider, AppBar, Toolbar, IconButton, Button
 } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBack, Search } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 const AssignmentPage = () => {
     const users = useSelector((state) => state.user);
     const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState('');
     // Collect all assignments from all users
     const allAssignments = users.flatMap(u => u.assignments || []);
+
+    // Filter assignments by student name
+    const filteredAssignments = allAssignments.filter(a =>
+        a.studentName?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     const getPriorityColor = (priority) => {
         switch (priority) {
@@ -54,16 +60,34 @@ const AssignmentPage = () => {
             <Typography variant="h4" gutterBottom>
                 Assignments
             </Typography>
-            {allAssignments.length === 0 ? (
+            {/* Search Bar */}
+            <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', maxWidth: 600 }}>
+                <Search sx={{ mr: 1, color: 'text.secondary' }} />
+                <input
+                    type="text"
+                    placeholder="Search by student name..."
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                    style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '6px',
+                        border: '1px solid #ccc',
+                        outline: 'none',
+                        fontSize: '1.1rem'
+                    }}
+                />
+            </Box>
+            {filteredAssignments.length === 0 ? (
                 <Typography>No assignments found for this student.</Typography>
             ) : (
-                allAssignments.map((assignment, idx) => (
+                filteredAssignments.map((assignment, idx) => (
                     <Card key={assignment.id || idx} sx={{ mb: 3, borderRadius: 3, boxShadow: 4, border: '2px solid #555' }}>
                         <CardContent>
                             <Box sx={{ p: 2, bgcolor: '#f5f5f5', borderRadius: 2 }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                                     <Typography variant="subtitle1" fontWeight="bold">
-                                        {assignment.title}
+                                        {assignment.studentName}
                                     </Typography>
                                     <Box sx={{ display: 'flex', gap: 1 }}>
                                         <Chip 

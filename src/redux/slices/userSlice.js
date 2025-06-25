@@ -18,7 +18,22 @@ const userSlice = createSlice({
         },
         updateuser: (state, action) => {
             const { index, updatedUser } = action.payload;
-            state[index] = updatedUser;
+            if (index !== -1) {
+                const prevUser = state[index];
+                // Merge quizzes arrays if both exist, otherwise use whichever exists
+                let mergedQuizzes = [];
+                if (prevUser.quizzes && updatedUser.quizzes) {
+                    // Merge and deduplicate by some unique property if needed
+                    mergedQuizzes = [...prevUser.quizzes, ...updatedUser.quizzes.filter(q => !prevUser.quizzes.some(pq => JSON.stringify(pq) === JSON.stringify(q)))];
+                } else {
+                    mergedQuizzes = updatedUser.quizzes || prevUser.quizzes || [];
+                }
+                state[index] = {
+                    ...prevUser,
+                    ...updatedUser,
+                    quizzes: mergedQuizzes
+                };
+            }
         },
         addAssignmentToUser: (state, action) => {
             const { userId, assignment } = action.payload;
@@ -29,7 +44,7 @@ const userSlice = createSlice({
                 }
                 user.assignments.push({
                     ...assignment,
-                    id: Date.now(), // Simple ID generation
+                    id: Date.now(), 
                     assignedDate: new Date().toISOString()
                 });
             }
