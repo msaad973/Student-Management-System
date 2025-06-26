@@ -65,6 +65,9 @@ const QuizPage = () => {
                                     Subject: {quiz.subject}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" gutterBottom>
+                                    Description: {quiz.description || ''}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" gutterBottom>
                                     Due Date: {quiz.dueDate ? new Date(quiz.dueDate).toLocaleDateString() : ''}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -76,7 +79,6 @@ const QuizPage = () => {
                                 <Typography variant="body2" color="text.secondary" gutterBottom>
                                     Question 2: {quiz.question2 || ''}
                                 </Typography>
-
                             </CardContent>
                             {index < allQuizzes.length - 1 && <Divider />}
                         </Card>

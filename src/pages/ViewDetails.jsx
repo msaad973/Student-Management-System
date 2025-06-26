@@ -27,20 +27,20 @@ const ViewDetails = () => {
     
     const userId = location.state?.user?.id || params.userId;
     const userIndex = users.findIndex((u) => u.id === userId);
-    const user = location.state?.user || users[userIndex];
     
-    const currentUser = users[userIndex];
+    // Always use the current user from Redux state instead of location state
+    const currentUser = userIndex !== -1 ? users[userIndex] : null;
 
     useEffect(() => {
-        if (userIndex === -1 || !user) {
+        if (userIndex === -1 || !currentUser) {
             navigate('/view-details');
         }
-    }, [userIndex, user, navigate]); 
+    }, [userIndex, currentUser, navigate]); 
 
     useEffect(() => {
         const handleBeforeUnload = () => {
-            if (userIndex !== -1) {
-                const originalUser = { ...user };
+            if (userIndex !== -1 && currentUser) {
+                const originalUser = { ...currentUser };
                 delete originalUser.assignments;
                 dispatch(updateuser({ index: userIndex, updatedUser: originalUser }));
             }
@@ -51,7 +51,7 @@ const ViewDetails = () => {
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
-    }, [userIndex, user, dispatch]);
+    }, [userIndex, currentUser, dispatch]);
 
     const handleDelete = () => {
         if (window.confirm('Are you sure you want to delete this record?')) {
@@ -62,11 +62,10 @@ const ViewDetails = () => {
 
     const handleSaveAssignment = (assignmentData) => {
         dispatch(addAssignmentToUser({ 
-            userId: user.id, 
+            userId: currentUser.id, 
             assignment: assignmentData 
         }));
         setOpenModal(false);
-        
     };
 
     // Add quizzes to user object (assuming quizzes are stored as user.quizzes)
@@ -85,13 +84,13 @@ const ViewDetails = () => {
 
     const handleSaveQuiz = (quizData) => {
         // Add student name to quizData
-        const quizWithStudent = { ...quizData, studentName: user.name };
+        const quizWithStudent = { ...quizData, studentName: currentUser.name };
         setQuizModalData(quizWithStudent); // Show the quiz data in the modal after save
         dispatch(updateuser({
             index: userIndex,
             updatedUser: {
-                ...user,
-                quizzes: [...(user.quizzes || []), quizWithStudent]
+                ...currentUser,
+                quizzes: [...(currentUser.quizzes || []), quizWithStudent]
             }
         }));
         // Keep modal open to show the data
@@ -147,7 +146,7 @@ const ViewDetails = () => {
         }
     };
 
-    if (!user || userIndex === -1) {
+    if (!currentUser || userIndex === -1) {
         return (
             <Container maxWidth="md">
                 <AppBar position="static" sx={{ mb: 4, bgcolor: '#223037',ml: 2 }}>
@@ -206,7 +205,7 @@ const ViewDetails = () => {
                         </Typography>
 
                         <Grid container spacing={3}>
-                            {Object.entries(user).filter(([key]) => key !== 'assignments').map(([key, value]) => (
+                            {Object.entries(currentUser).filter(([key]) => key !== 'assignments' && key !== 'quizzes').map(([key, value]) => (
                                 <Grid item xs={12} sm={6} key={key}>
                                     <Box>
                                         <Typography variant="subtitle2" color="text.secondary" fontWeight="bold">
@@ -434,7 +433,7 @@ const ViewDetails = () => {
                 <EditModal
                     open={openEditModal}
                     onClose={() => setOpenEditModal(false)}
-                    user={user}
+                    user={currentUser}
                     userIndex={userIndex}
                     onSave={handleEditSave}
                 />
@@ -442,6 +441,5 @@ const ViewDetails = () => {
         </>
     );
 };
-
 
 export default ViewDetails;

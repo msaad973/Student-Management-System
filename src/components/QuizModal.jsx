@@ -106,7 +106,6 @@ const QuizModal = ({ open, onClose, onSave, currentUser }) => {
         onClose();
     };
 
-    // Update studentName when currentUser changes
     React.useEffect(() => {
         setFormData(prev => ({
             ...prev,
@@ -241,15 +240,7 @@ const QuizModal = ({ open, onClose, onSave, currentUser }) => {
                             onChange={handleChange}
                             fullWidth
                         />
-                        <TextField
-                            name="studentName"
-                            label="Student Name"
-                            value={formData.studentName}
-                            onChange={handleChange}
-                            fullWidth
-                            required
-                            InputProps={{ readOnly: true }}
-                        />
+                        
                     </Box>
                 </DialogContent>
                 

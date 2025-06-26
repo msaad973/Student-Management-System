@@ -17,7 +17,15 @@ const userSlice = createSlice({
         },
 
         deleteuser: (state, action) => {
-            return state.filter((_, index) => index !== action.payload);
+            // action.payload is user id, not index
+            const userId = action.payload;
+            const idx = state.findIndex(u => u.id === userId);
+            if (idx !== -1) {
+                state.splice(idx, 1);
+            } else {
+                // Optionally, you can throw or log an error here
+                // console.error('User not found for deletion:', userId);
+            }
         },
 
         updateuser: (state, action) => {
